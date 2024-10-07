@@ -22,3 +22,97 @@ sudo systemctl start httpd
 sudo systemctl enable httpd
 Test Apache: Open a browser and navigate to your instance's public IP (http://<Your-Elastic-IP>). If everything is working, you should see the default Apache welcome page.
 This confirms that Apache is running and ready to serve web content."
+
+Installing MySQL (MariaDB) (4-5 mins)
+
+"Next, we need a database for WordPress. WordPress uses MySQL to store data, but we’ll install MariaDB, which is a compatible, open-source alternative:
+
+Install MariaDB:
+bash
+Copy code
+sudo yum install mariadb-server -y
+Start MariaDB and enable it on boot:
+bash
+Copy code
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+Secure the MariaDB installation: Run the secure installation script to set a root password and remove unsafe defaults:
+bash
+Copy code
+sudo mysql_secure_installation
+When prompted, enter a root password.
+Remove anonymous users and test databases for better security.
+Disallow remote root login.
+Your MySQL setup is now secure and ready for WordPress."
+
+Installing PHP (3-4 mins)
+
+"WordPress is written in PHP, so we need to install PHP and a few necessary extensions:
+
+Install PHP and extensions:
+bash
+Copy code
+sudo yum install php php-mysqlnd php-fpm -y
+Restart Apache to load PHP:
+bash
+Copy code
+sudo systemctl restart httpd
+At this point, our server is capable of processing PHP files, which is key to running WordPress."
+
+Download and Configure WordPress (5-7 mins)
+
+"Now we’re ready to download WordPress and get it configured:
+
+Navigate to the web root directory:
+bash
+Copy code
+cd /var/www/html
+Download WordPress:
+bash
+Copy code
+sudo wget https://wordpress.org/latest.tar.gz
+Extract WordPress:
+bash
+Copy code
+sudo tar -xzf latest.tar.gz
+Set permissions for the WordPress directory:
+bash
+Copy code
+sudo chown -R apache:apache /var/www/html/wordpress
+Create a MySQL database for WordPress:
+Log into MariaDB and create a new database and user for WordPress:
+bash
+Copy code
+sudo mysql -u root -p
+CREATE DATABASE wordpress;
+CREATE USER 'wordpressuser'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpressuser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+Configure WordPress:
+Copy the sample configuration file:
+bash
+Copy code
+sudo cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+Open and edit the wp-config.php file:
+bash
+Copy code
+sudo nano /var/www/html/wordpress/wp-config.php
+Update the following lines with your database information:
+php
+Copy code
+define('DB_NAME', 'wordpress');
+define('DB_USER', 'wordpressuser');
+define('DB_PASSWORD', 'your_password');
+define('DB_HOST', 'localhost');
+Save the file and exit."
+
+Final Steps - Complete Installation in Browser (3-4 mins)
+
+"Now we’re ready to finalize the WordPress installation!
+
+Open your browser and go to http://<Your-Elastic-IP>/wordpress. You should see the WordPress installation wizard.
+Complete the installation wizard:
+Set your site title, admin username, and password.
+Fill in any other details required by the setup process.
+Once you complete the wizard, you’ll be taken to the WordPress dashboard, and congratulations, your site is live!"
